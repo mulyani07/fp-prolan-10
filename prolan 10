@@ -2,8 +2,8 @@
 #include <string.h>
 
 // Deklarasi harga tiket
-int hargaEkonomi[3] = {145000, 40000, 120000};
-int hargaEksekutif[3] = {900000, 80000, 240000};
+int hargaEkonomi[3] = {145000, 40000, 120000, 130000, 135000, 90000};
+int hargaEksekutif[3] = {900000, 80000, 240000,26000, 270000, 180000};
 
 // Nomor rekening tujuan kereta api
 char nomorRekeningKeretaApi[] = "1492751038";
@@ -15,6 +15,9 @@ void tampilkanMenuRute() {
     printf("1. Jakarta - Surabaya\n");
     printf("2. Surabaya - Malang\n");
     printf("3. Malang - Yogyakarta\n");
+    printf("4. Semarang - Jakarta\n");
+    printf("5. Surabaya - Bandung\n");
+    printf("6. Bandung - Jakarta\n");
 }
 
 // Fungsi untuk menampilkan pilihan kelas
@@ -24,8 +27,8 @@ void tampilkanMenuKelas() {
     printf("2. Eksekutif\n");
 }
 
-// Fungsi untuk melakukan pembayaran
-void lakukanPembayaran(int totalHarga, int saldoRekening, char nomorRekeningTujuan[20]) {
+// Fungsi untuk melakukan pembayaran dan menyimpan data ke file
+void lakukanPembayaran(int totalHarga, int saldoRekening, char nomorRekeningTujuan[20], char namaLengkap[50], char email[50], char nomorKTP[20], int rute, int kelas, char kursi[10], int jumlahTiket) {
     printf("Melakukan pembayaran...\n");
 
     // Cek nomor rekening dan saldo
@@ -33,6 +36,17 @@ void lakukanPembayaran(int totalHarga, int saldoRekening, char nomorRekeningTuju
         saldoRekening -= totalHarga;
         printf("Pembayaran berhasil. Sisa saldo: Rp %d\n", saldoRekening);
         printf("Transfer uang ke rekening %s atas nama %s.\n", nomorRekeningKeretaApi, namaPemilikRekeningKeretaApi);
+
+        // Menyimpan informasi pemesanan ke dalam file
+        FILE *filePemesanan = fopen("pemesanan.txt", "a");
+        if (filePemesanan != NULL) {
+            fprintf(filePemesanan, "Nama: %s, Email: %s, Nomor KTP: %s, Rute: %d, Kelas: %d, Kursi: %s, Jumlah Tiket: %d, Total Harga: %d\n",
+                    namaLengkap, email, nomorKTP, rute, kelas, kursi, jumlahTiket, totalHarga);
+            fclose(filePemesanan);
+            printf("Informasi pemesanan telah disimpan ke dalam pemesanan.txt\n");
+        } else {
+            printf("Gagal membuka file pemesanan.txt\n");
+        }
     } else {
         printf("Pembayaran gagal. Nomor rekening tidak valid atau saldo tidak mencukupi.\n");
     }
@@ -48,12 +62,12 @@ int main() {
     int rute, kelas, saldoRekening, jumlahTiket;
 
     // Meminta informasi pengguna
-    printf("Masukkan Informasi Pengguna:\n");
-    printf("Nama Lengkap: ");
+    printf("===PEMESANAN TIKET KERETA API===\n");
+    printf(" Masukkan Nama Lengkap Anda: ");
     scanf(" %[^\n]s", namaLengkap);
-    printf("Email: ");
+    printf("Masukan Email Anda: ");
     scanf(" %s", email);
-    printf("Nomor KTP: ");
+    printf("Masukan Nomor KTP Anda: ");
     scanf(" %s", nomorKTP);
 
     // Meminta input jumlah saldo pengguna
@@ -102,8 +116,10 @@ int main() {
 
     // Menampilkan menu metode pembayaran
     printf("\nMelakukan Pembayaran:\n");
-    lakukanPembayaran(totalHarga, saldoRekening, nomorRekeningTujuan);
+    lakukanPembayaran(totalHarga, saldoRekening, nomorRekeningTujuan, namaLengkap, email, nomorKTP, rute, kelas, kursi, jumlahTiket);
 
     return 0;
 }
+
+
 
