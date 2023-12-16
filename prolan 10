@@ -1,1 +1,109 @@
-#include<srdio.h>
+#include <stdio.h>
+#include <string.h>
+
+// Deklarasi harga tiket
+int hargaEkonomi[3] = {145000, 40000, 120000};
+int hargaEksekutif[3] = {900000, 80000, 240000};
+
+// Nomor rekening tujuan kereta api
+char nomorRekeningKeretaApi[] = "1492751038";
+char namaPemilikRekeningKeretaApi[] = "Mulyani";
+
+// Fungsi untuk menampilkan pilihan rute
+void tampilkanMenuRute() {
+    printf("Pilih rute:\n");
+    printf("1. Jakarta - Surabaya\n");
+    printf("2. Surabaya - Malang\n");
+    printf("3. Malang - Yogyakarta\n");
+}
+
+// Fungsi untuk menampilkan pilihan kelas
+void tampilkanMenuKelas() {
+    printf("Pilih kelas:\n");
+    printf("1. Ekonomi\n");
+    printf("2. Eksekutif\n");
+}
+
+// Fungsi untuk melakukan pembayaran
+void lakukanPembayaran(int totalHarga, int saldoRekening, char nomorRekeningTujuan[20]) {
+    printf("Melakukan pembayaran...\n");
+
+    // Cek nomor rekening dan saldo
+    if (strcmp(nomorRekeningTujuan, nomorRekeningKeretaApi) == 0 && saldoRekening >= totalHarga) {
+        saldoRekening -= totalHarga;
+        printf("Pembayaran berhasil. Sisa saldo: Rp %d\n", saldoRekening);
+        printf("Transfer uang ke rekening %s atas nama %s.\n", nomorRekeningKeretaApi, namaPemilikRekeningKeretaApi);
+    } else {
+        printf("Pembayaran gagal. Nomor rekening tidak valid atau saldo tidak mencukupi.\n");
+    }
+}
+
+int main() {
+    char namaLengkap[50];
+    char email[50];
+    char nomorKTP[20];
+    char kursi[10];
+    char nomorRekeningTujuan[20];
+
+    int rute, kelas, saldoRekening, jumlahTiket;
+
+    // Meminta informasi pengguna
+    printf("Masukkan Informasi Pengguna:\n");
+    printf("Nama Lengkap: ");
+    scanf(" %[^\n]s", namaLengkap);
+    printf("Email: ");
+    scanf(" %s", email);
+    printf("Nomor KTP: ");
+    scanf(" %s", nomorKTP);
+
+    // Meminta input jumlah saldo pengguna
+    printf("Jumlah Saldo yang Dimiliki (Rp): ");
+    scanf("%d", &saldoRekening);
+
+    // Menampilkan menu rute dan input pilihan rute
+    tampilkanMenuRute();
+    scanf("%d", &rute);
+
+    // Menampilkan menu kelas dan input pilihan kelas
+    tampilkanMenuKelas();
+    scanf("%d", &kelas);
+
+    // Menampilkan menu pilih kursi
+    printf("Pilih kursi (Contoh: A1): ");
+    scanf("%s", kursi);
+
+    // Meminta input jumlah tiket
+    printf("Jumlah Tiket yang Ingin Dibeli: ");
+    scanf("%d", &jumlahTiket);
+
+    // Menampilkan total harga tiket
+    int totalHarga;
+    if (kelas == 1) {
+        totalHarga = hargaEkonomi[rute - 1] * jumlahTiket;
+    } else if (kelas == 2) {
+        totalHarga = hargaEksekutif[rute - 1] * jumlahTiket;
+    } else {
+        printf("Pilihan kelas tidak valid.\n");
+        return 1;
+    }
+
+    // Menampilkan informasi pemesanan
+    printf("\nInformasi Pemesanan:\n");
+    printf("Nama Lengkap: %s\n", namaLengkap);
+    printf("Email: %s\n", email);
+    printf("Nomor KTP: %s\n", nomorKTP);
+    printf("Rute: %d, Kelas: %d, Kursi: %s\n", rute, kelas, kursi);
+    printf("Jumlah Tiket: %d\n", jumlahTiket);
+    printf("Total Harga Tiket: Rp %d\n", totalHarga);
+
+    // Meminta input nomor rekening tujuan
+    printf("\nMasukkan Nomor Rekening Tujuan (tanpa spasi): ");
+    scanf(" %s", nomorRekeningTujuan);
+
+    // Menampilkan menu metode pembayaran
+    printf("\nMelakukan Pembayaran:\n");
+    lakukanPembayaran(totalHarga, saldoRekening, nomorRekeningTujuan);
+
+    return 0;
+}
+
