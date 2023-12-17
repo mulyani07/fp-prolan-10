@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Struktur data untuk menyimpan informasi tiket
+struct Tiket {
+    char namaKereta[50];
+    char rute[50];
+    char kelas[20];
+    char hari[20];
+    int harga;
+};
+
+// Fungsi untuk menukar dua elemen dalam array Tiket
+void swap(struct Tiket *a, struct Tiket *b) {
+    struct Tiket temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Fungsi untuk melakukan pembagian (partition) dalam algoritma Quicksort
+int partition(struct Tiket arr[], int low, int high) {
+    int pivot = arr[high].harga;
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j].harga < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+// Fungsi untuk mengimplementasikan algoritma Quicksort
+void quickSort(struct Tiket arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Fungsi untuk menampilkan menu pemilihan rute
+void pilihRute(struct Tiket tiket[], int jumlahTiket) {
+    char rute[50];
+    printf("\n===== Pilih Rute =====\n");
+    printf("Masukkan rute: ");
+    scanf("%s", rute);
+
+    // Menampilkan tiket berdasarkan rute
+    printf("\nDaftar Tiket untuk Rute '%s':\n", rute);
+    for (int i = 0; i < jumlahTiket; i++) {
+        if (strcmp(tiket[i].rute, rute) == 0) {
+            printf("%s - Kelas: %s - Hari: %s - Harga: %d\n", tiket[i].namaKereta, tiket[i].kelas, tiket[i].hari, tiket[i].harga);
+        }
+    }
+}
+
+// Fungsi untuk menampilkan menu pemilihan kelas
+void pilihKelas(struct Tiket tiket[], int jumlahTiket) {
+    char kelas[20];
+    printf("\n===== Pilih Kelas =====\n");
+    printf("Masukkan kelas: ");
+    scanf("%s", kelas);
+
+    // Menampilkan tiket berdasarkan kelas
+    printf("\nDaftar Tiket untuk Kelas '%s':\n", kelas);
+    for (int i = 0; i < jumlahTiket; i++) {
+        if (strcmp(tiket[i].kelas, kelas) == 0) {
+            printf("%s - Rute: %s - Hari: %s - Harga: %d\n", tiket[i].namaKereta, tiket[i].rute, tiket[i].hari, tiket[i].harga);
+        }
+    }
+}
+
+// Fungsi untuk menampilkan menu pemilihan hari
+void pilihHari(struct Tiket tiket[], int jumlahTiket) {
+    char hari[20];
+    printf("\n===== Pilih Hari =====\n");
+    printf("Masukkan hari: ");
+    scanf("%s", hari);
+
+    // Menampilkan tiket berdasarkan hari
+    printf("\nDaftar Tiket untuk Hari '%s':\n", hari);
+    for (int i = 0; i < jumlahTiket; i++) {
+        if (strcmp(tiket[i].hari, hari) == 0) {
+            printf("%s - Rute: %s - Kelas: %s - Harga: %d\n", tiket[i].namaKereta, tiket[i].rute, tiket[i].kelas, tiket[i].harga);
+        }
+    }
+}
+
+// Fungsi untuk menampilkan menu dan mengurutkan harga tiket
+void tampilkanMenu(struct Tiket tiket[], int jumlahTiket) {
+    int pilihan;
+
+    do {
+        printf("\n===== Menu Pemesanan Tiket Kereta =====\n");
+        printf("1. Tampilkan Daftar Tiket\n");
+        printf("2. Urutkan Harga Tiket Terendah ke Tinggi\n");
+        printf("3. Pilih Rute\n");
+        printf("4. Pilih Kelas\n");
+        printf("5. Pilih Hari\n");
+        printf("6. Keluar\n");
+        printf("Pilih menu: ");
+        scanf("%d", &pilihan);
+
+        switch (pilihan) {
+            case 1:
+                printf("\nDaftar Tiket:\n");
+                for (int i = 0; i < jumlahTiket; i++) {
+                    printf("%s - Rute: %s - Kelas: %s - Hari: %s - Harga: %d\n",
+                           tiket[i].namaKereta, tiket[i].rute, tiket[i].kelas, tiket[i].hari, tiket[i].harga);
+                }
+                break;
+
+            case 2:
+                quickSort(tiket, 0, jumlahTiket - 1);
+                printf("\nHarga Tiket telah diurutkan (Quicksort).\n");
+                break;
+
+            case 3:
+                pilihRute(tiket, jumlahTiket);
+                break;
+
+            case 4:
+                pilihKelas(tiket, jumlahTiket);
+                break;
+
+            case 5:
+                pilihHari(tiket, jumlahTiket);
+                break;
+
+            case 6:
+                printf("\nTerima kasih. Keluar dari aplikasi.\n");
+                break;
+
+            default:
+                printf("\nPilihan tidak valid. Silakan pilih lagi.\n");
+        }
+    } while (pilihan != 6);
+}
+
+int main() {
+    // Inisialisasi data tiket
+    struct Tiket tiket[] = {
+        {"Argo Bromo", "Jakarta-Surabaya", "Eksekutif", "Senin", 150000},
+        {"Gajayana1", "Jakarta-Surabaya", "Ekonomi", "Selasa", 120000},
+        {"Gajayana2", "Surabaya-Malang", "Eksekutif", "Rabu", 180000},
+        {"Malioboro Express1", "Surabaya-Malang", "Ekonomi", "Kamis", 130000},
+        {"Malioboro Express2", "Malang-Yogyakarta", "Eksekutif", "Jumat", 200000},
+        {"Taksaka1", "Malang-Yogyakarta", "Ekonomi", "Selasa", 135000},
+        {"Taksaka2", "Semarang-Jakarta", "Eksekutif", "Senin", 220000},
+        {"Bima", "Semarang-Jakarta", "Ekonomi", "Senin", 90000},
+        {"Gajayana3", "Surabaya-Bandung", "Ekonomi", "Kamis", 170000},
+        {"Gajayana4", "Surabaya-Bandung", "Eksekutif", "Kamis", 240000},
+        {"Cirebon Express5", "Bandung-Jakarta", "Ekonomi", "Rabu", 120000},
+        {"Cirebon Express6", "Bandung-Jakarta", "Eksekutif", "Senin", 180000},
+    };
+
+    int jumlahTiket = sizeof(tiket) / sizeof(tiket[0]);
+
+    // Menampilkan menu dan melakukan operasi pemesanan tiket
+    tampilkanMenu(tiket, jumlahTiket);
+
+    return 0;
+}
