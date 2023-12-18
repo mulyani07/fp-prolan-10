@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
+// Deklarasi harga tiket
+int hargaEkonomi[6] = {145000, 40000, 120000, 130000, 135000, 90000};
+int hargaEksekutif[6] = {900000, 80000, 240000, 26000, 270000, 180000};
+
+// Nomor rekening tujuan kereta api
+char nomorRekeningKeretaApi[] = "1492751038";
+char namaPemilikRekeningKeretaApi[] = "Mulyani";
+
 // Struktur untuk menyimpan informasi tiket
 struct Tiket {
     char namaKereta[50];
@@ -10,7 +18,7 @@ struct Tiket {
 };
 
 // Fungsi untuk mencari tiket berdasarkan nama kereta
-struct Tiket* cariTiket(const char* namaKereta, struct Tiket* daftarTiket, int jumlahTiket) {
+struct Tiket *cariTiket(const char *namaKereta, struct Tiket *daftarTiket, int jumlahTiket) {
     for (int i = 0; i < jumlahTiket; i++) {
         if (strcmp(daftarTiket[i].namaKereta, namaKereta) == 0) {
             return &daftarTiket[i]; // Mengembalikan pointer ke tiket yang ditemukan
@@ -19,13 +27,46 @@ struct Tiket* cariTiket(const char* namaKereta, struct Tiket* daftarTiket, int j
     return NULL; // Mengembalikan NULL jika tidak ditemukan
 }
 
-// Fungsi untuk menampilkan tiket berdasarkan rute
-void tampilkanTiketByRute(const char* rute, struct Tiket* daftarTiket, int jumlahTiket) {
-    printf("\nTiket untuk rute '%s':\n", rute);
-    for (int i = 0; i < jumlahTiket; i++) {
-        if (strcmp(daftarTiket[i].rute, rute) == 0) {
-            printf("%s (%s)\n", daftarTiket[i].namaKereta, daftarTiket[i].kelas);
+// Fungsi untuk menampilkan pilihan rute
+void tampilkanMenuRute() {
+    printf("Pilih rute:\n");
+    printf("1. Jakarta - Surabaya\n");
+    printf("2. Surabaya - Malang\n");
+    printf("3. Malang - Yogyakarta\n");
+    printf("4. Semarang - Jakarta\n");
+    printf("5. Surabaya - Bandung\n");
+    printf("6. Bandung - Jakarta\n");
+}
+
+// Fungsi untuk menampilkan pilihan kelas
+void tampilkanMenuKelas() {
+    printf("Pilih kelas:\n");
+    printf("1. Ekonomi\n");
+    printf("2. Eksekutif\n");
+}
+
+// Fungsi untuk melakukan pembayaran dan menyimpan data ke file
+void lakukanPembayaran(int totalHarga, int saldoRekening, char nomorRekeningTujuan[20], char namaLengkap[50], char email[50], char nomorKTP[20], int rute, int kelas, char kursi[10], int jumlahTiket) {
+    printf("Melakukan pembayaran...\n");
+
+    // Cek nomor rekening dan saldo
+    if (strcmp(nomorRekeningTujuan, nomorRekeningKeretaApi) == 0 && saldoRekening >= totalHarga) {
+        saldoRekening -= totalHarga;
+        printf("Pembayaran berhasil. Sisa saldo: Rp %d\n", saldoRekening);
+        printf("Transfer uang ke rekening %s atas nama %s.\n", nomorRekeningKeretaApi, namaPemilikRekeningKeretaApi);
+
+        // Menyimpan informasi pemesanan ke dalam file
+        FILE *filePemesanan = fopen("pemesanan.txt", "a");
+        if (filePemesanan != NULL) {
+            fprintf(filePemesanan, "Nama: %s, Email: %s, Nomor KTP: %s, Rute: %d, Kelas: %d, Kursi: %s, Jumlah Tiket: %d, Total Harga: %d\n",
+                    namaLengkap, email, nomorKTP, rute, kelas, kursi, jumlahTiket, totalHarga);
+            fclose(filePemesanan);
+            printf("Informasi pemesanan telah disimpan ke dalam pemesanan.txt\n");
+        } else {
+            printf("Gagal membuka file pemesanan.txt\n");
         }
+    } else {
+        printf("Pembayaran gagal. Nomor rekening tidak valid atau saldo tidak mencukupi.\n");
     }
 }
 
@@ -35,35 +76,47 @@ int main() {
         {"Argo Bromo", "Eksekutif", "Jakarta - Surabaya", 150000},
         {"Gajayana1", "Ekonomi", "Jakarta - Surabaya", 120000},
         {"Gajayana2", "Eksekutif", "Surabaya - Malang", 180000},
-        {"Malioboro Express1", "Ekonomi", "Surabaya - Malang", 130000},
-        {"Malioboro Express2", "Eksekutif", "Malang - Yogyakarta", 200000},
-        {"Taksaka1", "Ekonomi", "Malang - Yogyakarta", 135000},
-        {"Taksaka2", "Eksekutif", "Semarang - Jakarta", 220000},
-        {"Bima", "Ekonomi", "Semarang - Jakarta", 90000},
-        {"Gajayana3", "Ekonomi", "Surabaya - Bandung", 170000},
-        {"Gajayana4", "Eksekutif", "Surabaya - Bandung", 240000},
-        {"Cirebon Express5", "Ekonomi", "Bandung - Jakarta", 120000},
-        {"Cirebon Express6", "Eksekutif", "Bandung - Jakarta", 180000},
         // ... tambahkan tiket lain jika diperlukan
     };
 
     int jumlahTiket = sizeof(daftarTiket) / sizeof(daftarTiket[0]);
 
-    // Menampilkan tiket berdasarkan rute
-    tampilkanTiketByRute("Jakarta - Surabaya", daftarTiket, jumlahTiket);
-    tampilkanTiketByRute("Surabaya - Malang", daftarTiket, jumlahTiket);
-    tampilkanTiketByRute("Malang - Yogyakarta", daftarTiket, jumlahTiket);
-    tampilkanTiketByRute("Semarang - Jakarta", daftarTiket, jumlahTiket);
-    tampilkanTiketByRute("Surabaya - Bandung", daftarTiket, jumlahTiket);
-    tampilkanTiketByRute("Bandung - Jakarta", daftarTiket, jumlahTiket);
+    char namaLengkap[50];
+    char email[50];
+    char nomorKTP[20];
+    char kursi[10];
+    char nomorRekeningTujuan[20];
 
-    // Meminta input nama kereta yang dicari
+    int rute, kelas, saldoRekening, jumlahTiketPesan;
+
+    // Meminta informasi pengguna
+    printf("===PEMESANAN TIKET KERETA API===\n");
+    printf(" Masukkan Nama Lengkap Anda: ");
+    scanf(" %[^\n]s", namaLengkap);
+    printf("Masukkan Email Anda: ");
+    scanf(" %s", email);
+    printf("Masukkan Nomor KTP Anda: ");
+    scanf(" %s", nomorKTP);
+
+    // Menampilkan menu rute dan input pilihan rute
+    tampilkanMenuRute();
+    scanf("%d", &rute);
+
+    // Menampilkan menu kelas dan input pilihan kelas
+    tampilkanMenuKelas();
+    scanf("%d", &kelas);
+
+    // Menampilkan menu pilih kursi
+    printf("Pilih kursi (Contoh: A1): ");
+    scanf("%s", kursi);
+
+    // Menampilkan menu pencarian tiket
+    printf("Masukkan Nama Kereta yang Ingin Dicari: ");
     char namaKeretaCari[50];
-    printf("\nMasukkan nama kereta yang ingin dicari: ");
     scanf(" %[^\n]s", namaKeretaCari);
 
-    // Memanggil fungsi cariTiket
-    struct Tiket* tiketDitemukan = cariTiket(namaKeretaCari, daftarTiket, jumlahTiket);
+    // Mencari tiket berdasarkan nama kereta
+    struct Tiket *tiketDitemukan = cariTiket(namaKeretaCari, daftarTiket, jumlahTiket);
 
     // Menampilkan hasil pencarian
     if (tiketDitemukan != NULL) {
@@ -71,7 +124,39 @@ int main() {
         printf("Nama Kereta: %s\n", tiketDitemukan->namaKereta);
         printf("Kelas: %s\n", tiketDitemukan->kelas);
         printf("Rute: %s\n", tiketDitemukan->rute);
-        printf("Harga Tiket: Rp %d\n", tiketDitemukan->harga);
+        printf("Harga: Rp %d\n", tiketDitemukan->harga);
+
+        // Meminta input jumlah tiket
+        printf("\nJumlah Tiket yang Ingin Dibeli: ");
+        scanf("%d", &jumlahTiketPesan);
+
+        // Menampilkan total harga tiket
+        int totalHarga;
+        if (kelas == 1) {
+            totalHarga = hargaEkonomi[rute - 1] * jumlahTiketPesan;
+        } else if (kelas == 2) {
+            totalHarga = hargaEksekutif[rute - 1] * jumlahTiketPesan;
+        } else {
+            printf("Pilihan kelas tidak valid.\n");
+            return 1;
+        }
+
+        // Menampilkan informasi pemesanan
+        printf("\nInformasi Pemesanan:\n");
+        printf("Nama Lengkap: %s\n", namaLengkap);
+        printf("Email: %s\n", email);
+        printf("Nomor KTP: %s\n", nomorKTP);
+        printf("Rute: %d, Kelas: %d, Kursi: %s\n", rute, kelas, kursi);
+        printf("Jumlah Tiket: %d\n", jumlahTiketPesan);
+        printf("Total Harga Tiket: Rp %d\n", totalHarga);
+
+        // Meminta input nomor rekening tujuan
+        printf("\nMasukkan Nomor Rekening Tujuan (1492751038): ");
+        scanf(" %s", nomorRekeningTujuan);
+
+        // Menampilkan menu metode pembayaran
+        printf("\nMelakukan Pembayaran:\n");
+        lakukanPembayaran(totalHarga, saldoRekening, nomorRekeningTujuan, namaLengkap, email, nomorKTP, rute, kelas, kursi, jumlahTiketPesan);
     } else {
         printf("\nTiket dengan nama kereta '%s' tidak ditemukan.\n", namaKeretaCari);
     }
