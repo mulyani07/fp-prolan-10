@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 // Deklarasi harga tiket
 int hargaEkonomi[3] = {145000, 40000, 120000, 130000, 135000, 90000};
@@ -25,6 +27,44 @@ void tampilkanMenuKelas() {
     printf("Pilih kelas:\n");
     printf("1. Ekonomi\n");
     printf("2. Eksekutif\n");
+}
+
+// Fungsi untuk validasi nama
+int validasiNama(const char *nama) {
+    for (int i = 0; nama[i] != '\0'; i++) {
+        if (!isalpha(nama[i]) && nama[i] != ' ') {
+            // Memastikan bahwa setiap karakter adalah huruf atau spasi
+            return 0; // Tidak valid
+        }
+    }
+    return 1; // Valid
+}
+
+// Fungsi untuk validasi email
+bool validasiEmail(const char *email) {
+    int atCount = 0;  // Jumlah karakter '@' dalam email
+
+    for (int i = 0; email[i] != '\0'; i++) {
+        if (email[i] == '@') {
+            atCount++;
+        }
+    }
+
+    // Memastikan bahwa ada tepat satu karakter '@' dalam email
+    return (atCount == 1);
+}
+
+// Fungsi untuk validasi nomor KTP
+bool validasiNomorKTP(const char *nomorKTP) {
+    int panjang = 0;
+
+    // Menghitung panjang nomor KTP
+    while (nomorKTP[panjang] != '\0') {
+        panjang++;
+    }
+
+    // Memastikan panjang nomor KTP adalah 16 digit
+    return (panjang == 16);
 }
 
 // Fungsi untuk melakukan pembayaran dan menyimpan data ke file
@@ -62,13 +102,33 @@ int main() {
     int rute, kelas, saldoRekening, jumlahTiket;
 
     // Meminta informasi pengguna
-    printf("===PEMESANAN TIKET KERETA API===\n");
-    printf(" Masukkan Nama Lengkap Anda: ");
-    scanf(" %[^\n]s", namaLengkap);
-    printf("Masukan Email Anda: ");
-    scanf(" %s", email);
-    printf("Masukan Nomor KTP Anda: ");
-    scanf(" %s", nomorKTP);
+    printf("===PEMESANAN TIKET KERETA API===\n\n");
+    
+	do {
+    	printf("Masukkan Nama Lengkap Anda: ");
+    	scanf(" %[^\n]s", namaLengkap);
+    	if (!validasiNama(namaLengkap)) {
+            printf(" Maaf, nama Anda tidak valid. Pastikan berisikan alphabet semua.\n\n");
+        }
+	} while (!validasiNama(namaLengkap));
+	
+	do {
+		printf("===PEMESANAN TIKET KERETA API===\n\n");
+    	printf("Masukkan Email Anda: ");
+    	scanf(" %s", email);
+    	if (!validasiEmail(email)) {
+            printf(" Maaf, alamat email Anda tidak valid. Mohon masukkan ulang.\n");
+        }
+	} while (!validasiEmail(email));
+	
+	do {
+		printf("===PEMESANAN TIKET KERETA API===\n\n");
+    	printf(" Masukkan Nomor KTP Anda: ");
+    	scanf(" %s", nomorKTP);
+    	if (!validasiNomorKTP(nomorKTP)) {
+            printf(" Maaf, nomor KTP Anda tidak valid. Pastikan panjangnya 16 digit.\n");
+        }
+	} while (!validasiNomorKTP(nomorKTP));
 
     // Meminta input jumlah saldo pengguna
     printf("Jumlah Saldo yang Dimiliki (Rp): ");
@@ -120,6 +180,3 @@ int main() {
 
     return 0;
 }
-
-
-
